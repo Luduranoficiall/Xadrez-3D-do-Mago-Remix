@@ -1,0 +1,6 @@
+{
+  "summary":  "Implementation plan for integrating move duration indicators into the 3D Wizard Chess Move History Log HUD drawer. Measures active thinking time excluding animations, renders subtle gold pill badges next to moves, and preserves standard clean PGN clipboard export.",
+  "updatedAt":  "2026-10-29T18:48:38.001587512Z",
+  "requestFeedback":  true,
+  "userFacing":  true
+}
