@@ -2,6 +2,7 @@ import * as THREE_NS from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { clone as cloneSkeleton } from 'three/examples/jsm/utils/SkeletonUtils.js';
+import { audioManager } from './audioManager.js';
 
 /** @type {any} */
 const THREE = THREE_NS;
@@ -1426,6 +1427,9 @@ export function initWizardChess() {
       }
 
       document.getElementById('loading-overlay')?.classList.add('hidden');
+      setTimeout(() => {
+        document.getElementById('controls-hint')?.classList.add('hint-dismissed');
+      }, 7000);
     }
 
     // =========================================================================
@@ -2546,10 +2550,12 @@ export function initWizardChess() {
           const promoted = instantiatePiece('queen', piece.color, toR, toC);
           promoted.hasMoved = true;
           boardState[toR][toC] = promoted;
+          audioManager.playSpellCastSound();
         } else {
           piece.mesh.position.copy(endPos);
           piece.mesh.rotation.y = piece.color === 'w' ? Math.PI : 0;
           playPieceClip(piece, 'Idle', true, 0.18);
+          audioManager.playImpactSound(false);
         }
 
         if (isCapture) {
@@ -2706,6 +2712,7 @@ export function initWizardChess() {
               (atkClipTime >= CONTACT_CLIP_TIME || elapsed >= tContact + 0.06)
             ) {
               defenderFlinchTriggered = true;
+              audioManager.playImpactSound(true);
               if (captured) {
                 playPieceClip(captured, 'Shatter', false, 0.04);
                 impactFlashLight.position.set(
@@ -2721,6 +2728,7 @@ export function initWizardChess() {
             if (!shatterTriggered && (atkClipTime >= BLOW_CLIP_TIME || elapsed >= tImpact + 0.06)) {
               shatterTriggered = true;
               impactActualTime = elapsed;
+              audioManager.playShatterSound();
               postShatterPiecePos.copy(piece.mesh.position);
               if (captured && captured.mesh) {
                 const shatterOrigin = captured.mesh.position.clone();
@@ -4206,7 +4214,9 @@ export function initWizardChess() {
       const capturedTray = document.getElementById('captured-tray');
       const diffBadge = document.getElementById('hud-diff-badge');
 
-      turnDot.className = 'turn-dot' + (currentTurn === 'b' ? ' black' : '');
+      if (turnDot) {
+        turnDot.className = 'turn-dot' + (currentTurn === 'b' ? ' black' : '');
+      }
 
       const legalMoves = getAllLegalMoves(currentTurn);
       const inCheck = isKingInCheck(currentTurn, boardState);
@@ -4215,20 +4225,22 @@ export function initWizardChess() {
         gameOver = true;
         if (inCheck) {
           const winner = currentTurn === 'w' ? 'Black' : 'White';
-          turnText.textContent = `Checkmate — ${winner} Wins`;
+          if (turnText) turnText.textContent = `Checkmate — ${winner} Wins`;
           if (!checkmateState.active) {
+            audioManager.playCheckmateSound();
             triggerCheckmateSequence(currentTurn, currentTurn === 'w' ? 'b' : 'w');
           }
         } else {
-          turnText.textContent = 'Stalemate — Draw';
+          if (turnText) turnText.textContent = 'Stalemate — Draw';
         }
-      } else {
+      } else if (turnText) {
         const turnLabel = currentTurn === 'w' ? 'White to Move' : 'Black to Move';
         const aiColor = playerColor === 'w' ? 'b' : 'w';
         const isAiTurn = !scriptedGameActive && gameMode === 'single' && currentTurn === aiColor;
         const curDiff = DIFFICULTY_CONFIGS[aiDifficulty] || DIFFICULTY_CONFIGS.dificil;
         if (inCheck) {
           turnText.textContent = `${turnLabel} (Check!)`;
+          audioManager.playCheckSound();
         } else if (isAiTurn) {
           turnText.textContent = `${turnLabel} (${curDiff.label})...`;
         } else {
@@ -4276,6 +4288,7 @@ export function initWizardChess() {
     });
 
     renderer.domElement.addEventListener('pointerup', (e) => {
+      document.getElementById('controls-hint')?.classList.add('hint-dismissed');
       const moveDist = Math.hypot(e.clientX - pointerDownPos.x, e.clientY - pointerDownPos.y);
       if (moveDist > 6) return;
       if (isAnimatingMove || gameOver) return;
@@ -4349,6 +4362,7 @@ export function initWizardChess() {
         selectedSquare = { r: clickedR, c: clickedC };
         validMoves = getLegalMovesForPiece(clickedR, clickedC);
         showSquareHighlights(clickedR, clickedC, validMoves);
+        audioManager.playSelectSound();
       } else {
         clearSquareHighlights();
         selectedSquare = null;
@@ -4820,6 +4834,28 @@ export function initWizardChess() {
     });
 
     setAIDifficulty(aiDifficulty);
+
+    // Audio Settings Listeners (Gothic Ambiance & Spell Effects)
+    document.getElementById('btn-toggle-ambiance')?.addEventListener('click', () => {
+      audioManager.toggleAmbiance();
+    });
+
+    document.getElementById('btn-toggle-sfx')?.addEventListener('click', () => {
+      audioManager.toggleSfx();
+    });
+
+    audioManager.updateUI();
+
+    const unlockAudio = () => {
+      audioManager.ensureContext();
+      window.removeEventListener('pointerdown', unlockAudio);
+      window.removeEventListener('keydown', unlockAudio);
+    };
+    window.addEventListener('pointerdown', unlockAudio);
+    window.addEventListener('keydown', unlockAudio);
+    if (typeof window !== 'undefined') {
+      window.wizardChessAudio = audioManager;
+    }
 
     function toggleHistoryDrawer(force) {
       const win = window;

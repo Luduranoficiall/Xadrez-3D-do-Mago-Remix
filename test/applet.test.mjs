@@ -154,5 +154,29 @@ test('Move Duration Indicator: active turn duration tracking, formatMoveDuration
   assert.ok(!pgnMatch[1].includes('formatMoveDuration'), 'PGN export must remain standard algebraic notation');
 });
 
+test('Audio Settings section and procedural audio synthesis for Gothic Ambiance and Spell Effects', () => {
+  const appTsx = fs.readFileSync(path.join(ROOT, 'src/App.tsx'), 'utf-8');
+  assert.ok(appTsx.includes('id="audio-group"'), 'Missing #audio-group in App.tsx');
+  assert.ok(appTsx.includes('id="btn-toggle-ambiance"'), 'Missing #btn-toggle-ambiance in App.tsx');
+  assert.ok(appTsx.includes('id="btn-toggle-sfx"'), 'Missing #btn-toggle-sfx in App.tsx');
+
+  const stylesCss = fs.readFileSync(path.join(ROOT, 'src/styles.css'), 'utf-8');
+  assert.ok(stylesCss.includes('.audio-group'), 'Missing .audio-group in styles.css');
+  assert.ok(stylesCss.includes('.audio-btn'), 'Missing .audio-btn in styles.css');
+
+  const audioManagerJs = fs.readFileSync(path.join(ROOT, 'src/audioManager.js'), 'utf-8');
+  assert.ok(audioManagerJs.includes('toggleAmbiance'), 'Missing toggleAmbiance in audioManager.js');
+  assert.ok(audioManagerJs.includes('toggleSfx'), 'Missing toggleSfx in audioManager.js');
+  assert.ok(audioManagerJs.includes('playImpactSound'), 'Missing playImpactSound in audioManager.js');
+  assert.ok(audioManagerJs.includes('playShatterSound'), 'Missing playShatterSound in audioManager.js');
+
+  const engineJs = fs.readFileSync(path.join(ROOT, 'src/wizardChessEngine.js'), 'utf-8');
+  assert.ok(engineJs.includes('btn-toggle-ambiance'), 'Missing btn-toggle-ambiance listener in engine');
+  assert.ok(engineJs.includes('btn-toggle-sfx'), 'Missing btn-toggle-sfx listener in engine');
+  assert.ok(engineJs.includes('audioManager.playShatterSound'), 'Missing playShatterSound call in engine');
+  assert.ok(engineJs.includes('audioManager.playImpactSound'), 'Missing playImpactSound call in engine');
+});
+
+
 
 

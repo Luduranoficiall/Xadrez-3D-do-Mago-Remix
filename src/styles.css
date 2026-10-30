@@ -43,24 +43,24 @@ html, body, #root {
 /* Floating Minimal Top HUD */
 #hud-top {
   position: fixed;
-  top: 16px;
-  left: 20px;
-  right: 20px;
+  top: 14px;
+  left: 16px;
+  right: 16px;
   z-index: 10;
   display: flex;
   align-items: center;
   justify-content: space-between;
   pointer-events: none;
-  gap: 12px;
-  flex-wrap: wrap;
+  gap: 10px;
+  flex-wrap: nowrap;
 }
 
 .hud-group {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 6px;
   pointer-events: auto;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
 }
 
 .brand-pill {
@@ -255,10 +255,72 @@ html, body, #root {
 }
 
 .diff-desc {
-  font-size: 0.72rem;
-  color: var(--muted);
+  display: none;
+}
+
+/* Audio Settings Controls */
+.audio-group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.audio-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 12px;
+  font-size: 0.78rem;
+  border-radius: 999px;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  user-select: none;
+}
+
+.audio-icon {
+  font-size: 0.92rem;
+  line-height: 1;
+}
+
+.audio-label {
   letter-spacing: 0.02em;
-  padding: 2px 4px;
+}
+
+.audio-status-pill {
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  padding: 2px 6px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--muted);
+  transition: all 0.2s ease;
+}
+
+.audio-btn.active {
+  background: linear-gradient(135deg, rgba(212, 175, 55, 0.28), rgba(212, 175, 55, 0.1));
+  border-color: var(--gold);
+  color: var(--gold-bright);
+  box-shadow: 0 0 10px rgba(212, 175, 55, 0.25);
+}
+
+.audio-btn.active .audio-status-pill {
+  background: rgba(212, 175, 55, 0.25);
+  color: var(--gold-bright);
+  border: 1px solid rgba(212, 175, 55, 0.4);
+}
+
+.audio-btn:not(.active) {
+  opacity: 0.62;
+  border-color: rgba(255, 255, 255, 0.1);
+  color: var(--muted);
+}
+
+.audio-btn:not(.active):hover {
+  opacity: 0.9;
+  border-color: rgba(212, 175, 55, 0.5);
+  color: var(--text);
 }
 
 /* Bottom HUD */
@@ -277,20 +339,46 @@ html, body, #root {
 }
 
 .hint-pill {
-  background: rgba(10, 12, 18, 0.72);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(212, 175, 55, 0.22);
-  padding: 7px 16px;
+  background: rgba(10, 12, 18, 0.76);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(212, 175, 55, 0.32);
+  padding: 6px 14px;
   border-radius: 999px;
-  font-size: 0.76rem;
-  color: var(--muted);
+  font-size: 0.75rem;
+  color: var(--text);
   letter-spacing: 0.02em;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.55);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  pointer-events: auto;
+  transition: opacity 0.4s ease, transform 0.4s ease;
 }
 
-.hint-pill strong {
+.hint-pill.hint-dismissed {
+  opacity: 0 !important;
+  transform: translateY(10px) !important;
+  pointer-events: none !important;
+}
+
+.hint-sparkle {
+  font-size: 0.82rem;
+}
+
+.hint-dismiss-btn {
+  font-size: 0.7rem;
+  color: var(--muted);
+  margin-left: 6px;
+  padding: 1px 5px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  transition: all 0.2s ease;
+}
+
+.hint-dismiss-btn:hover {
   color: var(--gold-bright);
-  font-weight: 600;
+  background: rgba(212, 175, 55, 0.25);
 }
 
 .captured-pill {
@@ -1022,6 +1110,25 @@ body.cinematic-ui-hidden #history-drawer {
     padding: 6px 10px;
     margin: 2px 0 4px;
     width: 100%;
+  }
+
+  /* Audio Settings buttons in a 2-column grid on mobile */
+  .audio-group {
+    grid-column: span 6;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+    width: 100%;
+  }
+
+  .audio-group .audio-btn {
+    grid-column: span 1;
+    min-height: 42px;
+    padding: 8px 10px;
+    font-size: 0.76rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
   }
 
   /* 4 Camera View buttons in a 2x2 grid */

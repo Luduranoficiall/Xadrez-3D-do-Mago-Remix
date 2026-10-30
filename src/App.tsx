@@ -50,11 +50,11 @@ export default function App() {
   return (
     <>
       <div id="loading-overlay">
-        <div className="loader-title">Wizard Chess</div>
+        <div className="loader-title">Wizard Chess 3D</div>
         <div className="loader-bar-wrap">
           <div className="loader-bar" id="loader-bar"></div>
         </div>
-        <div id="loader-text">Summoning Sanctum Architecture &amp; Sculpted Pieces...</div>
+        <div id="loader-text">Carregando Xadrez Bruxo 3D...</div>
       </div>
 
       <div id="canvas-container"></div>
@@ -64,9 +64,9 @@ export default function App() {
         className="hud-btn mobile-only-restore-ui"
         id="btn-mobile-show-ui"
         onClick={handleRestoreUI}
-        title="Show HUD Controls"
+        title="Mostrar Controles"
       >
-        Show UI
+        Mostrar HUD
       </button>
 
       <div id="hud-top">
@@ -97,7 +97,7 @@ export default function App() {
           aria-controls="hud-right"
           onClick={() => setMobileSheetOpen((prev) => !prev)}
         >
-          {mobileSheetOpen ? 'Close' : 'Controls'}
+          {mobileSheetOpen ? 'Fechar' : 'Controles'}
         </button>
 
         <div
@@ -125,7 +125,7 @@ export default function App() {
           </div>
 
           <div className="mobile-sheet-header">
-            <span className="mobile-sheet-title">Controls</span>
+            <span className="mobile-sheet-title">Controles</span>
             <button
               type="button"
               className="mobile-sheet-close"
@@ -134,18 +134,18 @@ export default function App() {
                 e.stopPropagation();
                 setMobileSheetOpen(false);
               }}
-              aria-label="Close Controls"
+              aria-label="Fechar Controles"
             >
-              Close ✕
+              Fechar ✕
             </button>
           </div>
 
-          <div className="mobile-sheet-section-label">Game Actions</div>
+          <div className="mobile-sheet-section-label">Ações de Partida</div>
 
           <button
             className="hud-btn"
             id="btn-side-toggle"
-            title="Switch between Playing as White and Playing as Black"
+            title="Alternar entre jogar de Brancas e Pretas"
             onClick={() => setMobileSheetOpen(false)}
           >
             Play as Black
@@ -153,7 +153,7 @@ export default function App() {
           <button
             className="hud-btn"
             id="btn-ai-move"
-            title="Let the AI make the next move immediately"
+            title="Solicitar lance imediato da IA"
             onClick={() => setMobileSheetOpen(false)}
           >
             AI Move
@@ -161,7 +161,7 @@ export default function App() {
           <button
             className="hud-btn"
             id="btn-reset"
-            title="Start a fresh game on the altar"
+            title="Reiniciar partida no altar do santuário"
             onClick={() => setMobileSheetOpen(false)}
           >
             New Game
@@ -169,9 +169,8 @@ export default function App() {
           <button
             className={`hud-btn ${historyDrawerOpen ? 'active' : ''}`}
             id="btn-history-toggle"
-            title="Toggle Move History Log"
+            title="Abrir / Fechar Histórico de Lances"
             onClick={() => {
-              setHistoryDrawerOpen((prev) => !prev);
               setMobileSheetOpen(false);
             }}
           >
@@ -225,6 +224,37 @@ export default function App() {
 
           <div className="diff-desc" id="diff-desc">
             Cálculo de 2 lances com Alpha-Beta e Quiescência.
+          </div>
+
+          <div className="hud-divider" aria-hidden="true"></div>
+          <div className="mobile-sheet-section-label">
+            <span>Audio Settings</span>
+            <span className="mobile-sheet-section-sub">Atmosphere &amp; Magic</span>
+          </div>
+
+          <div className="audio-group" id="audio-group" role="group" aria-label="Audio Settings">
+            <button
+              type="button"
+              className="hud-btn audio-btn active"
+              id="btn-toggle-ambiance"
+              title="Toggle Gothic Ambiance (Wind howling &amp; stone echoing)"
+              aria-pressed="true"
+            >
+              <span className="audio-icon" aria-hidden="true">🌬️</span>
+              <span className="audio-label">Ambiance</span>
+              <span className="audio-status-pill">ON</span>
+            </button>
+            <button
+              type="button"
+              className="hud-btn audio-btn active"
+              id="btn-toggle-sfx"
+              title="Toggle Spell Effects (Shatter sounds &amp; wood/stone impacts)"
+              aria-pressed="true"
+            >
+              <span className="audio-icon" aria-hidden="true">✨</span>
+              <span className="audio-label">Spell SFX</span>
+              <span className="audio-status-pill">ON</span>
+            </button>
           </div>
 
           <div className="hud-divider" aria-hidden="true"></div>
@@ -331,8 +361,17 @@ export default function App() {
       </div>
 
       <div id="hud-bottom">
-        <div className="hint-pill" id="controls-hint">
-          <strong>Controls:</strong> Click Piece to Move &nbsp;•&nbsp; Left-Drag: Orbit &nbsp;•&nbsp; Right-Drag: Pan &nbsp;•&nbsp; Scroll: Zoom &nbsp;•&nbsp; WASD + R/F: Fly Cam &nbsp;•&nbsp; H: Hide UI
+        <div
+          className="hint-pill"
+          id="controls-hint"
+          onClick={() => {
+            document.getElementById('controls-hint')?.classList.add('hint-dismissed');
+          }}
+          title="Clique para ocultar dica"
+        >
+          <span className="hint-sparkle">⚔️</span>
+          <span>Clique na peça para jogar &nbsp;•&nbsp; Arraste para orbitar a catedral</span>
+          <span className="hint-dismiss-btn" aria-label="Ocultar dica">✕</span>
         </div>
         <div className="captured-pill" id="captured-tray"></div>
       </div>
